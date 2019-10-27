@@ -1,4 +1,7 @@
-// Methods for each route - for functionality
+// NOTE: All model files are to begin with an uppercase letter. 
+//       All controller files are to begin with a lowercase letter
+
+// Controller files conain the Methods for each route - creates functionality for the route
 
 // @desc:    Get all bootcamps
 // @route:   GET /api/v1/bootcamps
