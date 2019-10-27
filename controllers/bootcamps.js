@@ -1,6 +1,9 @@
 // NOTE: All model files are to begin with an uppercase letter. 
 //       All controller files are to begin with a lowercase letter
 
+// importing the model into the controller
+const Bootcamp = require('../models/Bootcamp');
+
 // Controller files conain the Methods for each route - creates functionality for the route
 
 // @desc:    Get all bootcamps
@@ -26,11 +29,21 @@ exports.getBootcamp = (req, res, next) => {
 // @desc:    create new bootcamp
 // @route:   POST /api/v1/bootcamps
 // @access:  Private
-exports.createBootcamp = (req, res, next) => {
-    res.status(200).json({
-        success: true,
-        msg: 'create new bootcamp'
-    });
+exports.createBootcamp = async(req, res, next) => {    
+    try {
+        const bootcamp = await Bootcamp.create(req.body); // when using async/await, must create new variable to access data from whatever is awaiting
+
+        // setting status as 201 because we're creating new data
+        res.status(201).json({
+            success: true,
+            data: bootcamp
+        });
+    } catch (err) {
+        // setting status to 400 if an error occurs and setting success to false
+        res.status(400).json({
+            success: false
+        });
+    }
 }
 
 // @desc:    update bootcamp by ID

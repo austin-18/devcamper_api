@@ -17,12 +17,15 @@ const bootcamps = require('./routes/bootcamps');
 
 const app = express();
 
+// Body Parser
+app.use(express.json());
+
 // Dev logging middleware
 if(process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'));
 }
 
-// Our custom logger using logger.js middlware
+// Our custom logger using logger.js middlware --- (no longer using this. Using Morgan)
 //app.use(logger);
 
 // Mount routers
