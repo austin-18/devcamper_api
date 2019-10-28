@@ -1,8 +1,12 @@
 // NOTE: All model files are to begin with an uppercase letter. 
 //       All controller files are to begin with a lowercase letter
 
+// 
+const ErrorResponse = require('../utils/errorResponse');
 // importing the model into the controller
 const Bootcamp = require('../models/Bootcamp');
+
+
 
 // Controller files conain the Methods for each route - creates functionality for the route
 
@@ -21,9 +25,10 @@ exports.getBootcamps = async (req, res, next) => {
 
     } catch (error) {
         // setting status to 400 if an error occurs and setting success to false
-        res.status(400).json({
-            success: false
-        });
+        // res.status(400).json({
+        //     success: false
+        // });
+        next(error);
     }
 };
 
@@ -36,9 +41,9 @@ exports.getBootcamp = async (req, res, next) => {
 
         // IF statement will catch the if the ID that is POSTed doesnt exist in the database, but it is correct format
         if(!bootcamp) {
-            return res.status(400).json({ //
-                success: false
-            })
+            return next(
+                new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+            );
         }
 
         res.status(200).json({
@@ -51,11 +56,12 @@ exports.getBootcamp = async (req, res, next) => {
         // this will catch if the format of the POSTed ID is incorrect, but will miss
         //      if the ID is the correct format but doesnt actually exist in the database
         //      The IF statement above catches correct format but non-existant ID
-        res.status(400).json({
-            success: false
-        });
+        // res.status(400).json({
+        //     success: false
+        // });
+        next(error);
     }
-}
+};
 
 // @desc:    create new bootcamp
 // @route:   POST /api/v1/bootcamps
@@ -69,11 +75,12 @@ exports.createBootcamp = async (req, res, next) => {
             success: true,
             data: bootcamp
         });
-    } catch (err) {
+    } catch (error) {
         // setting status to 400 if an error occurs and setting success to false
-        res.status(400).json({
-            success: false
-        });
+        // res.status(400).json({
+        //     success: false
+        // });
+        next(error);
     }
 };
 
@@ -89,9 +96,9 @@ exports.updateBootcamp = async (req, res, next) => {
 
         // IF statement will catch the if the ID that is DELETEed doesnt exist in the database, but it is correct format
         if(!bootcamp) {
-            return res.status(400).json({ //
-                success: false
-            })
+            return next(
+                new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+            );
         }
 
         res.status(200).json({
@@ -100,9 +107,10 @@ exports.updateBootcamp = async (req, res, next) => {
         });
 
     } catch (error) {
-        res.status(400).json({
-            success: false
-        });
+        // res.status(400).json({
+        //     success: false
+        // });
+        next(error);
     }
 };
 
@@ -115,9 +123,9 @@ exports.deleteBootcamp = async (req, res, next) => {
 
         // IF statement will catch the if the ID that is DELETEed doesnt exist in the database, but it is correct format
         if(!bootcamp) {
-            return res.status(400).json({ //
-                success: false
-            })
+            return next(
+                new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
+            );
         }
 
         res.status(200).json({
@@ -126,8 +134,9 @@ exports.deleteBootcamp = async (req, res, next) => {
         });
 
     } catch (error) {
-        res.status(400).json({
-            success: false
-        });
+        // res.status(400).json({
+        //     success: false
+        // });
+        next(error);
     }
 };
