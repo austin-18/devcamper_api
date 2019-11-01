@@ -2,6 +2,7 @@
 //       All controller files are to begin with a lowercase letter
 
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const BootcampSchema = new mongoose.Schema({
     name: {
@@ -100,6 +101,12 @@ const BootcampSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+});
+
+// Create bootcamp slug from the name
+BootcampSchema.pre('save', function() {
+    this.slug = slugify(this.name, {lower: true});  // "this." syntax refers to the name and slug properties above in the model
+    //console.log('Slugify ran,', this.name);
 });
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
