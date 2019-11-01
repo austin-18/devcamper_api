@@ -3,6 +3,7 @@
 
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const geocoder = require('../utils/geocoder');
 
 const BootcampSchema = new mongoose.Schema({
     name: {
@@ -104,9 +105,32 @@ const BootcampSchema = new mongoose.Schema({
 });
 
 // Create bootcamp slug from the name
-BootcampSchema.pre('save', function() {  // .pre is pre-ware. This is middleware that will execute before data is saved to the DB
+BootcampSchema.pre('save', function(next) {  // .pre is pre-ware. This is middleware that will execute before data is saved to the DB
     this.slug = slugify(this.name, {lower: true});  // "this." syntax refers to the name and slug properties above in the model
     //console.log('Slugify ran,', this.name);
+    next();
 });
+
+// Geocode & create location field for mapquest api
+BootcampSchema.pre('save', async function(next) {
+    const loc = await geocoder.geocode(this.address);
+    // loc variable is filled from mapquest. it returns an array containing a single object. This is why we must use loc[0]
+    //this.location refers to the location in the BootcampSchema model above. We are setting its parameters to the mapquest generated data.
+    this.location = {
+        type: 'Point',
+        coordinates: [loc[0].longitude, loc[0].latitude],
+        formattedAddress: loc[0].formattedAddress,
+        street: loc[0].streetName,
+        city: loc[0].city,
+        state: loc[0].stateCode,
+        zipcode: loc[0].zipcode,
+        country: loc[0].countryCode
+    }
+
+    // Do not save address in DB
+    this.address = undefined;
+    next();
+})
+
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
