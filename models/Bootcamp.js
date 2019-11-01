@@ -104,7 +104,7 @@ const BootcampSchema = new mongoose.Schema({
 });
 
 // Create bootcamp slug from the name
-BootcampSchema.pre('save', function() {
+BootcampSchema.pre('save', function() {  // .pre is pre-ware. This is middleware that will execute before data is saved to the DB
     this.slug = slugify(this.name, {lower: true});  // "this." syntax refers to the name and slug properties above in the model
     //console.log('Slugify ran,', this.name);
 });
