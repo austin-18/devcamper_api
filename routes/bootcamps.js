@@ -4,10 +4,14 @@ const { // importing the methods from the controller file
     getBootcamp, 
     createBootcamp, 
     updateBootcamp, 
-    deleteBootcamp
+    deleteBootcamp,
+    getBootcampsInRadius
 } = require('../controllers/bootcamps');
 
 const router = express.Router();
+
+router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
+
 
 router // defining methods that belong to the '/' path
     .route('/')
