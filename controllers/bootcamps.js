@@ -17,14 +17,46 @@ const geocoder = require('../utils/geocoder');
 // @access:  Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
     let query;
-    
-    let queryString = JSON.stringify(req.query);
 
+    const reqQuery = {...req.query}; // making a copy of an object using the spread operator "..."
+    
+    // Fields to exclude from query
+    const removeFields = ['select', 'sort'];
+
+    // Loop over removeFields and delete them from reqQuery
+    removeFields.forEach(param => delete reqQuery[param]);
+
+
+
+    // create query string
+    let queryString = JSON.stringify(reqQuery);
+    // create operators ($gt, $gte, etc)
     queryString = queryString.replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`);
     //console.log(queryString);
+    // finding resources
     query = Bootcamp.find(JSON.parse(queryString));
 
+    // Select Fields
+    if(req.query.select){
+        // This will split the SELECT fields wherever there is a comma (creates an array) and then join the array elements back together with a space
+        // Note: URL query (denoted by "?") will look like this :{{URL}}/api/v1/bootcamps/?select=name,discription 
+        //          where "name" and "description" are what we want to select (filter) to return
+        //      Mongoose requres the fields to be separated by a space, so we use .split(",").join(" ") to replace commas with spaces
+        const fields = req.query.select.split(',').join(' '); 
+        query = query.select(fields);
+    }
+
+    // sort
+    if(req.query.sort){
+        const sortBy = req.query.sort.split(',').join(' ');
+        // Note: putting a "-" before the sort field will reverse the 
+        query = query.sort(sortBy);
+    } else {
+        query = query.sort('-createdAt') // else statement will sort by date if no other sort is specifed ("-" addition means most recent date first, oldest last)
+    }
+
     //const bootcamps = await Bootcamp.find();
+    // executing query
     const bootcamps = await query;
 
 
