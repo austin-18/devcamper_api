@@ -21,7 +21,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     const reqQuery = {...req.query}; // making a copy of an object using the spread operator "..."
     
     // Fields to exclude from query
-    const removeFields = ['select', 'sort'];
+    const removeFields = ['select', 'sort', 'page', 'limit'];
 
     // Loop over removeFields and delete them from reqQuery
     removeFields.forEach(param => delete reqQuery[param]);
@@ -55,14 +55,44 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
         query = query.sort('-createdAt') // else statement will sort by date if no other sort is specifed ("-" addition means most recent date first, oldest last)
     }
 
+    // Pagination
+    const page = parseInt(req.query.page, 10) || 1; // creates page 1 as the default with page being base 10
+    const limit = parseInt(req.query.limit, 10) || 25; // creates limit of 25 results by default with base 10
+    const startIndex = (page-1)*limit; // calculates first result on the page based on page and limit
+    const endIndex = page * limit; // calculates the last result on the page based on page and limit
+    const total = await Bootcamp.countDocuments(); // finds the total number of results available
+
+
+    query = query.skip(startIndex).limit(limit);
+
+
     //const bootcamps = await Bootcamp.find();
     // executing query
     const bootcamps = await query;
 
+    // Pagination result - will be an empty object if a single page returns all the results
+    const pagination = {};
+
+    // if endIdex is not at the end of the total results, we will allow there to be another page next
+    if(endIndex < total) {
+        pagination.next = {
+            page: page+1,
+            limit // since variable name is same as our key name, we can do this instead of limit: limit
+        }
+    }
+
+    // if startIndex is not at the begining of the results (0), we allow there to be a previous page
+    if(startIndex > 0) {
+        pagination.prev = {
+            page: page-1,
+            limit // since variable name is same as our key name, we can do this instead of limit: limit
+        }
+    }
 
     res.status(200).json({
         success: true,
         count: bootcamps.length,
+        pagination, // since variable name is same as our key name, we can do this instead of pagination: pagination
         data: bootcamps
         });
 });
