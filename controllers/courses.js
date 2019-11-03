@@ -20,7 +20,10 @@ exports.getCourses = asyncHandler(async (req, res, next) => {
             bootcamp: req.params.bootcampID
         });
     } else {
-        query = Course.find();
+        query = Course.find().populate({ // .populate() will allow us to fill the bootcamp section with whatever bootcamp data we want from the bootcamp DB
+            path: 'bootcamp',
+            select: 'name description' // we pick to show the bootcamp "name" and "description" fields
+        }); 
     }
 
     const courses = await query;

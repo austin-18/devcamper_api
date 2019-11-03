@@ -102,6 +102,9 @@ const BootcampSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 
 // Create bootcamp slug from the name
@@ -130,7 +133,22 @@ BootcampSchema.pre('save', async function(next) {
     // Do not save address in DB
     this.address = undefined;
     next();
-})
+});
 
+// Cascade delete all related courses when a bootcamp is deleted
+BootcampSchema.pre('remove', async function(next) {
+    console.log(`Courses being removed from bootcamp ${this._id}`);
+    await this.model('Course').deleteMany({ bootcamp: this._id });
+    next();
+});
+
+
+// Reverse populate with virtuals (must create the virtual on the Schema)
+BootcampSchema.virtual('courses', {
+    ref: 'Course', // Reference to the model we will be using
+    localField: '_id', // local field to tie to
+    foreignField: 'bootcamp', // foreign field in the Course model that we want to pertain to
+    justOne: false // we want to get an array of all the courses for each bootcamp
+})
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
