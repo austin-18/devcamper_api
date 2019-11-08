@@ -2,7 +2,9 @@ const express = require('express');
 const { // importing the methods from the controller file
     getCourses,
     getCourse,
-    addCourse
+    addCourse,
+    updateCourse,
+    deleteCourse
 } = require('../controllers/courses');
 
 const router = express.Router({
@@ -17,5 +19,7 @@ router
 router
     .route('/:id')
     .get(getCourse)
+    .put(updateCourse)
+    .delete(deleteCourse);
 
 module.exports = router;
