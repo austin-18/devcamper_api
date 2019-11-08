@@ -5,7 +5,8 @@ const { // importing the methods from the controller file
     createBootcamp, 
     updateBootcamp, 
     deleteBootcamp,
-    getBootcampsInRadius
+    getBootcampsInRadius,
+    bootcampPhotoUpload
 } = require('../controllers/bootcamps');
 
 // include other resource routers
@@ -29,5 +30,8 @@ router // defining methods that belong to the '/:id' path
     .get(getBootcamp)
     .put(updateBootcamp)
     .delete(deleteBootcamp);
+
+router
+    .route('/:id/photo').put(bootcampPhotoUpload);
 
 module.exports = router;
