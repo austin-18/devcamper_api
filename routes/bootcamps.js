@@ -9,6 +9,9 @@ const { // importing the methods from the controller file
     bootcampPhotoUpload
 } = require('../controllers/bootcamps');
 
+const Bootcamp = require('../models/Bootcamp');
+const advancedResults = require('../middleware/advancedResults');
+
 // include other resource routers
 const courseRouter = require('./courses');
 
@@ -22,7 +25,7 @@ router.route('/radius/:zipcode/:distance').get(getBootcampsInRadius);
 
 router // defining methods that belong to the '/' path
     .route('/')
-    .get(getBootcamps)
+    .get(advancedResults(Bootcamp, 'courses'), getBootcamps)
     .post(createBootcamp);
 
 router // defining methods that belong to the '/:id' path
