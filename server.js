@@ -4,6 +4,7 @@ const colors = require('colors'); // colors library to color text in to console 
 //const logger = require('./middleware/logger');
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 const path = require('path');
 // importing connectDB method from db.js to connect to MongoDB
@@ -27,6 +28,9 @@ const app = express();
 
 // Body Parser
 app.use(express.json());
+
+// Cookie Parser
+app.use(cookieParser());
 
 // Dev logging middleware
 if(process.env.NODE_ENV === 'development'){
