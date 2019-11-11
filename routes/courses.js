@@ -14,18 +14,21 @@ const router = express.Router({
     mergeParams: true
 });
 
+// bringing in protect middleware to protect routes. Add this inside the request method (.get, .post, etc) before the called method to make that route protected
+const { protect } = require('../middleware/auth');
+
 router
     .route('/')
     .get(advancedResults(Course, {
         path: 'bootcamp',
         select: 'name description'
     }), getCourses)
-    .post(addCourse);
+    .post(protect, addCourse);
 
 router
     .route('/:id')
     .get(getCourse)
-    .put(updateCourse)
-    .delete(deleteCourse);
+    .put(protect, updateCourse)
+    .delete(protect, deleteCourse);
 
 module.exports = router;

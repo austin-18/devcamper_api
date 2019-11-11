@@ -76,3 +76,16 @@ const sendTokenResponse = (user, statusCode, res) => {
             token: token
         });
 };
+
+// @desc:    get current logged in User
+// @route:   POST /api/v1/auth/me
+// @access:  Private
+exports.getMe = asyncHandler(async (req, res, next) => {
+    // Dont need lower line since this route is already protected. No need to re-find user, user is already found in protected route
+    // const user = await User.findById(req.user.id);
+
+    res.status(200).json({
+        success: true,
+        data: req.user
+    });
+});
