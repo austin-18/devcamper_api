@@ -101,7 +101,12 @@ const BootcampSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    user: { // user object to ensure that every bootcamp has a user tied to it.
+        type: mongoose.Schema.ObjectId,
+        ref: 'User', // the model that this
+        required: true
+    },
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
