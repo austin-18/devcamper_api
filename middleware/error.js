@@ -27,6 +27,11 @@ const errorHandler = (err, req, res, next) => {
         error = new ErrorResponse(message, 400);
     }
 
+    if(err.name === 'StrictModeError'){
+        const message = 'Data recieved does not match expectated data'
+        error = new ErrorResponse(message, 400);
+    }
+
     res.status(error.statusCode || 500).json({
         success: false,
         error: error.message || 'Server Error'
