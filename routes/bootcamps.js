@@ -10,13 +10,13 @@ const { // importing the methods from the controller file
 } = require('../controllers/bootcamps');
 
 const Bootcamp = require('../models/Bootcamp');
-const advancedResults = require('../middleware/advancedResults');
 
 // include other resource routers
 const courseRouter = require('./courses');
 
 const router = express.Router();
 
+const advancedResults = require('../middleware/advancedResults');
 // bringing in protect middleware to protect/authorize routes. Add this inside the request method (.get, .post, etc) before the called method to make that route protected
 const { protect, authorize } = require('../middleware/auth');
 
