@@ -2,6 +2,10 @@
 const ErrorResponse = require('../utils/errorResponse');
 // importing the asyncHandler middleware that will eliminate the need for try/catch blocks with next() methods
 const asyncHandler = require('../middleware/async');
+// 
+const sendEmail = require('../utils/sendEmail');
+//
+const crypto = require('crypto');
 // importing the model into the controller
 const User = require('../models/User');
 
@@ -81,10 +85,60 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     
     await user.save({ validateBeforeSave: false });
 
+    // create reset url
+    const resetUrl = `${req.protocol}://${req.get('host')}/api/v1/auth/resetpassword/${resetToken}`;
+
+    const message = `You are receiving this email becuase you (or someone else) has requested the rest of a password.
+    Pease make a PUT request to \n\n ${resetUrl}`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Password reset token',
+            message: message
+        });
+
+        res.status(200).json({ success: true, data: 'Email sent' });
+    } catch (error) {
+        console.error(error);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save({ validateBeforeSave: false });
+
+        return next(new ErrorResponse('Email could not be sent', 500));
+    }
+
     res.status(200).json({
         success: true,
         data: user
     });
+});
+
+// @desc:    reset passwrod
+// @route:   PUT /api/v1/auth/resetpassword
+// @access:  Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+    // get hashed token
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.resettoken).digest('hex');
+    
+    // Dont need lower line since this route is already protected. No need to re-find user, user is already found in protected route
+    const user = await User.findOne({
+        resetPasswordToken,
+        resetPasswordExpire: { $gt: Date.now() }
+    });
+
+    if(!user){
+        return next(new ErrorResponse('Invalid Token', 400));
+    }
+
+    // Set new password
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    sendTokenResponse(user, 200, res);
 });
 
 // Get token from model, create cookie, and send response
