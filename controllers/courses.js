@@ -16,7 +16,7 @@ const Bootcamp = require('../models/Bootcamp');
 exports.getCourses = asyncHandler(async (req, res, next) => {
 
     if(req.params.bootcampID) {
-        const courses = await courses.find({bootcamp: req.params.bootcampID});
+        const courses = await Course.find({bootcamp: req.params.bootcampID});
 
         return res.status(200).json({
             success: true,

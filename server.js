@@ -22,8 +22,8 @@ connectDB();
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 const auth = require('./routes/auth');
-const users = require('./routes/users')
-
+const users = require('./routes/users');
+const reviews = require('./routes/reviews');
 
 const app = express();
 
@@ -54,6 +54,7 @@ app.use('/api/v1/bootcamps', bootcamps); //mounts the bootcamps routes from boot
 app.use('/api/v1/courses', courses); //mounts the course routes from courses.js onto the url /api/v1/courses
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/users', users);
+app.use('/api/v1/reviews', reviews);
 
 // Using errorHandler methods (must puse below the URL routers)
 app.use(errorHandler);
