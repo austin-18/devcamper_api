@@ -58,7 +58,7 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.bootcampID)
 
     if(!bootcamp) {
-        return next(new ErrorResponse(`No bootcamp with the id of ${req.params.bootcampId}`), 404);
+        return next(new ErrorResponse(`No bootcamp with the id of ${req.params.bootcampId}`,404));
     }
 
      // Make sure user is bootcamp owner
@@ -113,7 +113,7 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
     const course = await Course.findById(req.params.id)
 
     if(!course) {
-        return next(new ErrorResponse(`No course with the id of ${req.params.id}`), 404);
+        return next(new ErrorResponse(`No course with the id of ${req.params.id}`, 404));
     }
 
     // Make sure user is course owner
