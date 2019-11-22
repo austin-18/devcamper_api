@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
     // IF statement executes when mongoose returns 'CastError' which is returned when we submit a bad bootcamp ID
     console.log(err.name);
     if(err.name === 'CastError'){
-        const message = `Resource not found with ID of ${err.value}`;
+        const message = `Resource not found`;
         error = new ErrorResponse(message, 404);
     }
 

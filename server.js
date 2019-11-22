@@ -5,6 +5,7 @@ const colors = require('colors'); // colors library to color text in to console 
 const morgan = require('morgan');
 const fileupload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
+const monoSanitize = require('express-mongo-sanitize')
 const errorHandler = require('./middleware/error');
 const path = require('path');
 // importing connectDB method from db.js to connect to MongoDB
@@ -40,6 +41,9 @@ if(process.env.NODE_ENV === 'development'){
 
 // File uploading
 app.use(fileupload());
+
+// Sanitize data
+app.use(monoSanitize());
 
 // Set static folder
 // this allows us to go to {{path}}/uploads/<imageName.jpg> to see the photo in the browser
