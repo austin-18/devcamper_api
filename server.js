@@ -8,6 +8,9 @@ const cookieParser = require('cookie-parser');
 const monoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet')
 const xss = require('xss-clean')
+const rateLimit = require('express-rate-limit')
+const hpp = require('hpp')
+const cors = require('cors')
 const errorHandler = require('./middleware/error');
 const path = require('path');
 // importing connectDB method from db.js to connect to MongoDB
@@ -52,6 +55,19 @@ app.use(helmet());
 
 // Prevent XSS (cross site scripting) attacks
 app.use(xss());
+
+// Rate Limiting 
+const limiter = rateLimit({
+    windowMs: 10*60*1000, // 10 minutes
+    max: 100 // max number of requests per time window
+});
+app.use(limiter);
+
+// Prevent http param polution
+app.use(hpp());
+
+// enable CORS - allows mulitple domains to access the API. Commonly used for if front-end is on different domain than backend API domain
+app.use(cors());
 
 // Set static folder
 // this allows us to go to {{path}}/uploads/<imageName.jpg> to see the photo in the browser
